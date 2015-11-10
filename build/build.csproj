@@ -1,0 +1,28 @@
+<Project DefaultTargets="BuildAndPublish" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Root>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))\</Root>
+    <SolutionDir>..\</SolutionDir>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <RemoveDirectories Include="$([System.IO.Directory]::GetDirectories(&quot;$(Root)\BayleysAWSTest\&quot;,&quot;bin&quot;, SearchOption.AllDirectories))" />
+    <RemoveDirectories Include="$([System.IO.Directory]::GetDirectories(&quot;$(Root)\BayleysAWSTest\&quot;,&quot;obj&quot;, SearchOption.AllDirectories))" />
+    <RemoveDirectories Include="$(Root)\Publish" />
+  </ItemGroup>
+  
+  <Target Name="CleanupPublish">
+    <Message Text="Solution Dir: $(SolutionDir)" />
+    <Message Text="Deleting Publish folder..." />
+    <Message Text="@(RemoveDirectories)" />
+    <RemoveDir Directories="@(RemoveDirectories)" />
+  </Target>
+  
+  <Target Name="BuildTestProjects" DependsOnTargets="CleanupPublish">
+  </Target>
+  
+  <Target Name="BuildAndPublish" DependsOnTargets="BuildTestProjects">
+    <MSBuild Projects="$(Root)\BayleysAWSTest\BayleysAWSTest.csproj" Properties="SolutionDir=$(Root);DeployOnBuild=False;OutputPath=bin;Platform=$(Platform);Configuration=$(Configuration);DeployOnBuild=True;DeployTarget=Package;PackageLocation=$(Root)\Publish\BayleysAWSTest.Package.zip" />
+  </Target>
+
+</Project>
